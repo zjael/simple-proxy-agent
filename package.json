@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zjael/proxy-agent.git"
+    "url": "git+https://github.com/zjael/simple-proxy-agent.git"
   },
   "dependencies": {
     "debug": "^4.1.1",
@@ -25,9 +25,9 @@
   },
   "keywords": ["proxy", "agent", "http", "https", "socks", "socks4", "socks5"],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zjael/proxy-agent/issues"
+    "url": "https://github.com/zjael/simple-proxy-agent/issues"
   },
-  "homepage": "https://github.com/zjael/proxy-agent#readme"
+  "homepage": "https://github.com/zjael/simple-proxy-agent#readme"
 }
