@@ -1,11 +1,9 @@
-const debug = require('debug')('agent');
 const url = require('url');
 const HTTP = require('./http.js');
 const SOCKS = require('./socks.js');
 
 function agent(proxy, options = {}) {
   if (!proxy) throw new Error('a proxy must be specified!');
-  debug('creating new ProxyAgent instance: %o', proxy);
 
   options = Object.assign({
     tunnel: true

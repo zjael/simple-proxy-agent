@@ -14,7 +14,6 @@
     "url": "git+https://github.com/zjael/simple-proxy-agent.git"
   },
   "dependencies": {
-    "debug": "^4.1.1",
     "socks": "^2.3.2"
   },
   "devDependencies": {
@@ -23,7 +22,15 @@
     "pem": "^1.14.3",
     "proxy": "^1.0.1"
   },
-  "keywords": ["proxy", "agent", "http", "https", "socks", "socks4", "socks5"],
+  "keywords": [
+    "proxy",
+    "agent",
+    "http",
+    "https",
+    "socks",
+    "socks4",
+    "socks5"
+  ],
   "author": "",
   "license": "MIT",
   "bugs": {
