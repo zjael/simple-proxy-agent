@@ -1,10 +1,10 @@
 # simple-proxy-agent
 
-[![Build status](https://github.com/zjael/simple-proxy-agent/workflows/push/badge.svg)](https://github.com/zjael/simple-proxy-agent/actions)
-[![Package version](https://img.shields.io/npm/v/simple-proxy-agent.svg?style=flat-square)](https://npmjs.org/package/simple-proxy-agent)
-[![NPM downloads](https://img.shields.io/npm/dm/simple-proxy-agent?style=flat-square)](https://npmjs.org/package/simple-proxy-agent)
-[![Make a pull request](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Build status](https://github.com/zjael/simple-proxy-agent/workflows/Node%20CI/badge.svg)](https://github.com/zjael/simple-proxy-agent/actions)
+[![Package version](https://img.shields.io/npm/v/simple-proxy-agent.svg)](https://npmjs.org/package/simple-proxy-agent)
+[![NPM downloads](https://img.shields.io/npm/dm/simple-proxy-agent)](https://npmjs.org/package/simple-proxy-agent)
+[![Make a pull request](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
 > An simple agent for HTTP and HTTPS through HTTP and SOCKS proxies
 
