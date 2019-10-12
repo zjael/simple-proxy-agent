@@ -1,0 +1,33 @@
+{
+  "name": "simple-proxy-agent",
+  "version": "1.0.0",
+  "description": "An simple agent for HTTP and HTTPS through HTTP and SOCKS proxies",
+  "main": "./src/agent.js",
+  "engines": {
+    "node": ">=11.0"
+  },
+  "scripts": {
+    "test": "mocha --timeout 10000 --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zjael/proxy-agent.git"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "socks": "^2.3.2"
+  },
+  "devDependencies": {
+    "mocha": "^6.2.1",
+    "node-fetch": "^2.6.0",
+    "pem": "^1.14.3",
+    "proxy": "^1.0.1"
+  },
+  "keywords": ["proxy", "agent", "http", "https", "socks", "socks4", "socks5"],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zjael/proxy-agent/issues"
+  },
+  "homepage": "https://github.com/zjael/proxy-agent#readme"
+}
