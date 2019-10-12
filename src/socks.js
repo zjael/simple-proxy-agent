@@ -55,6 +55,7 @@ SOCKS.prototype.addRequest = function(req, options) {
 
 SOCKS.prototype.createConnection = async function(options) {
   try {
+    if(!options.protocol) options = options.uri;
     let ip = options.host;
     if(!net.isIP(options.host)) {
       ip = await new Promise((resolve, reject) => {
@@ -66,8 +67,6 @@ SOCKS.prototype.createConnection = async function(options) {
     }
 
     const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
-    if(ssl && this.options.tunnel === true && options.port === 80) options.port = 443;
-
     const { socket } = await SocksClient.createConnection({
       proxy: this.proxy,
       command: 'connect',
@@ -83,8 +82,7 @@ SOCKS.prototype.createConnection = async function(options) {
         socket: socket,
         host: options.host,
         port: options.port,
-        servername: options.servername || options.host,
-        hostname: options.hostname,
+        servername: options.servername || options.host
       });
     }
 
