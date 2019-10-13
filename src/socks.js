@@ -42,7 +42,7 @@ SOCKS.prototype.addRequest = function(req, options) {
     port: options.port,
     pathname: req.path
   });
-  req.path = absolute;
+  req.path = decodeURIComponent(absolute);
   req.shouldKeepAlive = false;
 
   this.createConnection(options)
