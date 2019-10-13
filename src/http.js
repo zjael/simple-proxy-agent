@@ -44,6 +44,7 @@ HTTP.prototype.createConnection = function(options) {
     if(!options.protocol) options = options.uri;
     const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
     if(ssl && this.options.tunnel === true) {
+      if(options.port === 80) options.port = 443;
       // CONNECT Method
       const req = http.request({
         host: this.proxy.host,
@@ -59,7 +60,7 @@ HTTP.prototype.createConnection = function(options) {
         const sock = tls.connect({
           socket: socket,
           host: options.host,
-          port: options.port,
+          port: +options.port,
           servername: options.servername || options.host
         });
         resolve(sock);

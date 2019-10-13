@@ -76,6 +76,7 @@ SOCKS.prototype.createConnection = async function(options) {
     }
 
     const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
+    if(ssl && this.options.tunnel === true && options.port === 80) options.port = 443;
     const { socket } = await SocksClient.createConnection({
       proxy: this.proxy,
       command: 'connect',
@@ -90,7 +91,7 @@ SOCKS.prototype.createConnection = async function(options) {
       return tls.connect({
         socket: socket,
         host: options.host,
-        port: options.port,
+        port: +options.port,
         servername: options.servername || options.host
       });
     }
