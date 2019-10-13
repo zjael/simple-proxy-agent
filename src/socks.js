@@ -56,8 +56,17 @@ SOCKS.prototype.addRequest = function(req, options) {
 SOCKS.prototype.createConnection = async function(options) {
   try {
     if(!options.protocol) options = options.uri;
+
+    let lookup = false;
+    switch (this.proxy.protocol) {
+      case 'socks4:':
+      case 'socks5h:':
+        lookup = true;
+        break;
+    }
+
     let ip = options.host;
-    if(!net.isIP(options.host)) {
+    if(lookup && !net.isIP(options.host)) {
       ip = await new Promise((resolve, reject) => {
         dns.lookup(options.host, (err, address) => {
           if(err) reject(err);
@@ -72,7 +81,7 @@ SOCKS.prototype.createConnection = async function(options) {
       command: 'connect',
       destination: {
         host: ip,
-        port: options.port
+        port: +options.port
       },
       timeout: 10000
     })
@@ -92,5 +101,4 @@ SOCKS.prototype.createConnection = async function(options) {
     throw err;
   }
 };
-
 module.exports = SOCKS;
