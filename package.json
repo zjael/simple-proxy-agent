@@ -1,6 +1,6 @@
 {
   "name": "simple-proxy-agent",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An simple agent for HTTP and HTTPS through HTTP and SOCKS proxies",
   "main": "./src/agent.js",
   "engines": {
