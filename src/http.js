@@ -21,6 +21,7 @@ class HTTP extends EventEmitter {
 }
 
 HTTP.prototype.addRequest = function(req, options) {
+  if(!options.protocol) options = options.uri;
   const absolute = url.format({
     protocol: options.protocol || 'http:',
     hostname: options.hostname || options.host,
@@ -41,7 +42,6 @@ HTTP.prototype.addRequest = function(req, options) {
 
 HTTP.prototype.createConnection = function(options) {
   return new Promise((resolve, reject) => {
-    if(!options.protocol) options = options.uri;
     const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
     if(ssl && this.options.tunnel === true) {
       if(options.port === 80) options.port = 443;
@@ -50,20 +50,20 @@ HTTP.prototype.createConnection = function(options) {
         host: this.proxy.host,
         port: this.proxy.port,
         method: "CONNECT",
-        path: options.host + ":" + options.port,
+        path: (options.hostname || options.host) + ":" + options.port,
         headers: {
           host: options.host
         }
       });
 
       req.once("connect", (res, socket, head) => {
-        const sock = tls.connect({
+        const tunnel = tls.connect({
           socket: socket,
-          host: options.host,
+          host: options.hostname || options.host,
           port: +options.port,
           servername: options.servername || options.host
         });
-        resolve(sock);
+        resolve(tunnel);
       });
 
       req.once("error", (err) => {

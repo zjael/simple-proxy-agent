@@ -35,6 +35,7 @@ class SOCKS extends EventEmitter {
 }
 
 SOCKS.prototype.addRequest = function(req, options) {
+  if(!options.protocol) options = options.uri;
   const absolute = url.format({
     protocol: options.protocol || 'http:',
     hostname: options.hostname || options.host,
@@ -55,8 +56,6 @@ SOCKS.prototype.addRequest = function(req, options) {
 
 SOCKS.prototype.createConnection = async function(options) {
   try {
-    if(!options.protocol) options = options.uri;
-
     let lookup = false;
     switch (this.proxy.protocol) {
       case 'socks4:':
@@ -65,10 +64,10 @@ SOCKS.prototype.createConnection = async function(options) {
         break;
     }
 
-    let ip = options.host;
-    if(lookup && !net.isIP(options.host)) {
+    let ip = options.hostname;
+    if(lookup && !net.isIP(ip)) {
       ip = await new Promise((resolve, reject) => {
-        dns.lookup(options.host, (err, address) => {
+        dns.lookup(ip, (err, address) => {
           if(err) reject(err);
           resolve(address);
         });
@@ -90,13 +89,12 @@ SOCKS.prototype.createConnection = async function(options) {
     if(ssl && this.options.tunnel === true) {
       return tls.connect({
         socket: socket,
-        host: options.host,
+        host: options.hostname || options.host,
         port: +options.port,
         servername: options.servername || options.host
       });
     }
 
-    // raw net.Socket that is established to the destination host through the given proxy server
     return socket;
   } catch (err) {
     throw err;
