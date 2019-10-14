@@ -2,12 +2,10 @@ const url = require('url');
 const tls = require('tls');
 const dns = require('dns');
 const net = require('net');
-const { EventEmitter } = require('events');
 const { SocksClient } = require('socks');
 
-class SOCKS extends EventEmitter {
+class SOCKS {
   constructor(proxy, options) {
-    super();
     this.proxy = proxy;
     this.options = options;
     this.init();

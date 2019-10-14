@@ -2,11 +2,9 @@ const http = require('http');
 const url = require('url');
 const tls = require('tls');
 const net = require('net');
-const { EventEmitter } = require('events');
 
-class HTTP extends EventEmitter {
+class HTTP {
   constructor(proxy, options) {
-    super();
     this.proxy = proxy;
     this.options = options;
     this.init();
