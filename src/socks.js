@@ -36,13 +36,6 @@ class SOCKS extends EventEmitter {
 
 SOCKS.prototype.addRequest = function(req, options) {
   if(!options.protocol) options = options.uri;
-  const absolute = url.format({
-    protocol: options.protocol || 'http:',
-    hostname: options.hostname || options.host,
-    port: options.port,
-    pathname: req.path
-  });
-  req.path = decodeURIComponent(absolute);
   req.shouldKeepAlive = false;
 
   this.createConnection(options)
