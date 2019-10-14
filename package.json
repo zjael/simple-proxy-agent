@@ -4,7 +4,7 @@
   "description": "An simple agent for HTTP and HTTPS through HTTP and SOCKS proxies",
   "main": "./src/agent.js",
   "engines": {
-    "node": ">=11.0"
+    "node": ">=10.0"
   },
   "scripts": {
     "test": "mocha --timeout 10000 --exit"
