@@ -51,7 +51,8 @@ HTTP.prototype.createConnection = function(options) {
         path: (options.hostname || options.host) + ":" + options.port,
         headers: {
           host: options.host
-        }
+        },
+        timeout: this.options.timeout
       });
 
       req.once('connect', (res, socket, head) => {
@@ -64,6 +65,10 @@ HTTP.prototype.createConnection = function(options) {
         resolve(tunnel);
       });
 
+      req.once('timeout', () => {
+        reject(new Error('HTTP CONNECT request timed out'))
+      })
+
       req.once('error', (err) => {
         reject(err);
       });
@@ -71,6 +76,7 @@ HTTP.prototype.createConnection = function(options) {
       req.once('close', () => {
         reject(new Error('Tunnel failed. Socket closed prematurely'));
       });
+
       req.end();
     } else {
       const socket = net.connect({

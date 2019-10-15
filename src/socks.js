@@ -74,7 +74,7 @@ SOCKS.prototype.createConnection = async function(options) {
         host: ip,
         port: +options.port
       },
-      timeout: 10000
+      timeout: this.options.timeout
     })
 
     if(ssl && this.options.tunnel === true) {

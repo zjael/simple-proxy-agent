@@ -6,7 +6,8 @@ function agent(proxy, options = {}) {
   if (!proxy) throw new Error('a proxy must be specified!');
 
   options = Object.assign({
-    tunnel: true
+    tunnel: true,
+    timeout: 5000
   }, options)
 
   const { protocol } = url.parse(proxy);

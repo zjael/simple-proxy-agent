@@ -10,7 +10,6 @@
 
 ## Todo
 
-* [ ] Configurable timeout
 * [ ] Proxy authentication
 
 ## Table of Contents
@@ -35,6 +34,7 @@ fetch('example.com', {
   agent: new ProxyAgent('http://0.0.0.0:8080', {
     // Options, with all defaults
     tunnel: true, // If true, will tunnel all HTTPS using CONNECT method
+    timeout: 5000, // Time in milli-seconds, to maximum wait for proxy connection to establish
   })
 })
 .then(res => res.text())
