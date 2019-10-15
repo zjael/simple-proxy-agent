@@ -68,6 +68,9 @@ HTTP.prototype.createConnection = function(options) {
         reject(err);
       });
 
+      req.once('close', () => {
+        reject(new Error('Tunnel failed. Socket closed prematurely'));
+      });
       req.end();
     } else {
       const socket = net.connect({
