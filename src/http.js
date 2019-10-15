@@ -66,6 +66,7 @@ HTTP.prototype.createConnection = function(options) {
       });
 
       req.once('timeout', () => {
+        req.abort();
         reject(new Error('HTTP CONNECT request timed out'))
       })
 
