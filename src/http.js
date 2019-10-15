@@ -45,7 +45,7 @@ HTTP.prototype.createConnection = function(options) {
       if(options.port === 80) options.port = 443;
       // CONNECT Method
       const req = http.request({
-        host: this.proxy.host,
+        host: this.proxy.hostname,
         port: this.proxy.port,
         method: "CONNECT",
         path: (options.hostname || options.host) + ":" + options.port,
