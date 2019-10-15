@@ -47,14 +47,14 @@ HTTP.prototype.createConnection = function(options) {
       const req = http.request({
         host: this.proxy.hostname,
         port: this.proxy.port,
-        method: "CONNECT",
+        method: 'CONNECT',
         path: (options.hostname || options.host) + ":" + options.port,
         headers: {
           host: options.host
         }
       });
 
-      req.once("connect", (res, socket, head) => {
+      req.once('connect', (res, socket, head) => {
         const tunnel = tls.connect({
           socket: socket,
           host: options.hostname || options.host,
@@ -64,7 +64,7 @@ HTTP.prototype.createConnection = function(options) {
         resolve(tunnel);
       });
 
-      req.once("error", (err) => {
+      req.once('error', (err) => {
         reject(err);
       });
 
