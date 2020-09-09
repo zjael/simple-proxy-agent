@@ -42,16 +42,22 @@ HTTP.prototype.createConnection = function(options) {
   return new Promise((resolve, reject) => {
     const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
     if(ssl && this.options.tunnel === true) {
-      if(options.port === 80) options.port = 443;
+      if(options.port == 80) options.port = 443;
       // CONNECT Method
+      let headers = {
+        host: options.host
+      };
+
+      if (this.proxy.auth) {
+        headers.Authorization = 'Basic ' + Buffer.from(this.proxy.auth).toString('base64');
+      }
+
       const req = http.request({
         host: this.proxy.hostname,
         port: this.proxy.port,
         method: 'CONNECT',
         path: (options.hostname || options.host) + ":" + options.port,
-        headers: {
-          host: options.host
-        },
+        headers,
         timeout: this.options.timeout
       });
 
