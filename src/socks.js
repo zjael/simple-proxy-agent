@@ -58,7 +58,7 @@ SOCKS.prototype.createConnection = async function(options) {
     let ip = options.hostname;
     if(lookup && !net.isIP(ip)) {
       ip = await new Promise((resolve, reject) => {
-        dns.lookup(ip, (err, address) => {
+        dns.lookup(ip, { family: this.proxy.protocol == 'socks4' ? 4 : 0 }, (err, address) => {
           if(err) reject(err);
           resolve(address);
         });
@@ -66,7 +66,7 @@ SOCKS.prototype.createConnection = async function(options) {
     }
 
     const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
-    if(ssl && this.options.tunnel === true && options.port === 80) options.port = 443;
+    if(ssl && this.options.tunnel === true && options.port == 80) options.port = 443;
     const { socket } = await SocksClient.createConnection({
       proxy: this.proxy,
       command: 'connect',
