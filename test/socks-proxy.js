@@ -55,48 +55,78 @@ function readAddress(type, buffer) {
   }
 }
 
+const authMethod = {
+  NO_AUTHENT: 0x00,
+  USERNAME_PASSWORD: 0x02
+}
+
 const server = net.createServer((socket) => {
   socket.once('data', (greeting) => {
+    // greeting = [socks_version, supported_authentication_methods,
+    //             ...supported_authentication_method_ids]
     const socks_version = greeting[0];
     if (socks_version === 4) {
+      let response = 0x5a;
+      // username verification only
+      if(greeting.length > 9) {
+        const username = greeting.slice(8, greeting.length).toString();
+        response = username === 'toto' ? 0x5a : 0x5b;
+      }
       const address = {
         port: greeting.slice(2, 4).readUInt16BE(0),
         address: formatIPv4(greeting.slice(4)),
       };
-
-      net.connect(address.port, address.address, function() {
+      net.connect(address.port, address.address, function () {
+        let socket = this;
         // the socks response must be made after the remote connection has been
         // established
-        socket.pipe(this).pipe(socket);
-        socket.write(Buffer.from([0, 0x5a, 0,0, 0,0,0,0]));
+        //socket.pipe(this).pipe(socket);
+        socket.write(Buffer.from([0, response, 0, 0, 0, 0, 0, 0]));
       });
     }
     else if (socks_version === 5) {
-      // greeting = [socks_version, supported_authentication_methods,
-      //             ...supported_authentication_method_ids]
-      socket.write(Buffer.from([5, 0]));
-      socket.once('data', function(connection) {
-        const address_type = connection[3];
-        const address = readAddress(address_type, connection.slice(4));
-        net.connect(address.port, address.address, function() {
-          socket.pipe(this).pipe(socket);
-          const response = Buffer.from(connection);
-          response[1] = 0;
-          socket.write(response);
-        });
-      });
+      const methods = greeting.slice(2, greeting.length);
+      const authent = methods.length >= 2
+      if (authent) {
+        socket.write(Buffer.from([5, authMethod.USERNAME_PASSWORD]));
+        socket.once('data', authentSocksV5);
+      } else {
+        socket.write(Buffer.from([5, authMethod.NO_AUTHENT]));
+        socket.once('data', requestHandlerSocksV5);
+      }
     }
   })
-  .on('error', function(err) {
-    console.error('socket error: %s', err.message);
-  })
-  .on('end', function() {
-    socket.end(); // is this unnecessary?
-  });
+    .on('error', function (err) {
+      console.error('socket error: %s', err.message);
+    });
 })
-.on('error', function(err) {
-  console.error('server error: %j', err);
-});
+  .on('error', function (err) {
+    console.error('server error: %j', err);
+  });
+
+const authentSocksV5 = function (userPass) {
+  let socket = this;
+  const username = userPass.slice(2, userPass[1] + 2).toString();
+  const password = userPass.slice(userPass[1] + 3).toString();
+  if (username === 'toto' && password === 'tata') {
+    socket.write(Buffer.from([5, 0x00]));
+  } else {
+    socket.write(Buffer.from([5, 0x01]));
+  }
+  socket.once('data', requestHandlerSocksV5);
+};
+
+const requestHandlerSocksV5 = function (connection) {
+  let socket = this;
+  const address_type = connection[3];
+  const address = readAddress(address_type, connection.slice(4));
+  net.connect(address.port, address.address, function () {
+    socket.pipe(this).pipe(socket);
+    const response = Buffer.from(connection);
+    response[1] = 0;
+    socket.write(response);
+  });
+}
 
 function create() {
   return new Promise(resolve => {
