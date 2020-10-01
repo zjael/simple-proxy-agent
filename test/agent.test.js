@@ -63,7 +63,21 @@ after(done => {
 })
 
 describe('ProxyAgent', () => {
-  it('should work over an HTTP proxy to an HTTP server', () => {
+  it('should work over an HTTP proxy to an HTTP server with auth', () => {
+    const proxy = process.env.HTTP_PROXY || 'http://toto:tata@127.0.0.1:' + ports.httpProxyPort;
+    const target = process.env.HTTP_TARGET_URL || 'http://127.0.0.1:' + ports.httpServerPort;
+    const match = target.match(/:\/\/(.*)/)[1];
+    return fetch(target, { agent: new ProxyAgent(proxy) })
+      .then(res => res.json())
+      .then(json => {
+        assert.equal(match, json.host);
+      })
+      .catch(err => {
+        throw err;
+      })
+  });
+
+  it('should work over an HTTP proxy to an HTTP server without auth', () => {
     const proxy = process.env.HTTP_PROXY || 'http://127.0.0.1:' + ports.httpProxyPort;
     const target = process.env.HTTP_TARGET_URL || 'http://127.0.0.1:' + ports.httpServerPort;
     const match = target.match(/:\/\/(.*)/)[1];
@@ -77,7 +91,21 @@ describe('ProxyAgent', () => {
       })
   });
 
-  it('should work over an HTTP proxy to an HTTPS server', () => {
+  it('should work over an HTTP proxy to an HTTPS server with auth', () => {
+    const proxy = process.env.HTTP_PROXY || 'http://toto:tata@127.0.0.1:' + ports.httpProxyPort;
+    const target = process.env.HTTPS_TARGET_URL || 'https://127.0.0.1:' + ports.httpsServerPort;
+    const match = target.match(/:\/\/(.*)/)[1];
+    return fetch(target, { agent: new ProxyAgent(proxy) })
+      .then(res => res.json())
+      .then(json => {
+        assert.equal(match, json.host);
+      })
+      .catch(err => {
+        throw err;
+      })
+  });
+
+  it('should work over an HTTP proxy to an HTTPS server without auth', () => {
     const proxy = process.env.HTTP_PROXY || 'http://127.0.0.1:' + ports.httpProxyPort;
     const target = process.env.HTTPS_TARGET_URL || 'https://127.0.0.1:' + ports.httpsServerPort;
     const match = target.match(/:\/\/(.*)/)[1];
@@ -91,7 +119,21 @@ describe('ProxyAgent', () => {
       })
   });
 
-  it('should work over an HTTPS proxy to an HTTP server', () => {
+  it('should work over an HTTPS proxy to an HTTP server with auth', () => {
+    const proxy = process.env.HTTPS_PROXY || 'https://toto:tata@127.0.0.1:' + ports.httpsProxyPort;
+    const target = process.env.HTTP_TARGET_URL || 'http://127.0.0.1:' + ports.httpServerPort;
+    const match = target.match(/:\/\/(.*)/)[1];
+    return fetch(target, { agent: new ProxyAgent(proxy) })
+      .then(res => res.json())
+      .then(json => {
+        assert.equal(match, json.host);
+      })
+      .catch(err => {
+        throw err;
+      })
+  });
+
+  it('should work over an HTTPS proxy to an HTTP server without auth', () => {
     const proxy = process.env.HTTPS_PROXY || 'https://127.0.0.1:' + ports.httpsProxyPort;
     const target = process.env.HTTP_TARGET_URL || 'http://127.0.0.1:' + ports.httpServerPort;
     const match = target.match(/:\/\/(.*)/)[1];
@@ -106,7 +148,7 @@ describe('ProxyAgent', () => {
   });
 
   it('should work over an HTTPS proxy to an HTTPS server', () => {
-    const proxy = process.env.HTTPS_PROXY || 'https://127.0.0.1:' + ports.httpsProxyPort;
+    const proxy = process.env.HTTPS_PROXY || 'https://toto:tata@127.0.0.1:' + ports.httpsProxyPort;
     const target = process.env.HTTPS_TARGET_URL || 'https://127.0.0.1:' + ports.httpsServerPort;
     const match = target.match(/:\/\/(.*)/)[1];
     return fetch(target, { agent: new ProxyAgent(proxy) })
@@ -119,7 +161,7 @@ describe('ProxyAgent', () => {
       })
   });
 
-  it('should work over an SOCKSv4 proxy to an HTTP server', () => {
+  it('should work over an SOCKSv4 proxy to an HTTP server without auth', () => {
     const proxy = process.env.SOCKS4_PROXY || 'socks4://127.0.0.1:' + ports.socksProxyPort;
     const target = process.env.HTTP_TARGET_URL || 'http://127.0.0.1:' + ports.httpServerPort;
     const match = target.match(/:\/\/(.*)/)[1];
@@ -133,7 +175,21 @@ describe('ProxyAgent', () => {
       })
   });
 
-  it('should work over an SOCKSv4 proxy to an HTTPS server', () => {
+  it('should work over an SOCKSv4 proxy to an HTTP server with auth', () => {
+    const proxy = process.env.SOCKS4_PROXY || 'socks4://toto:tata@127.0.0.1:' + ports.socksProxyPort;
+    const target = process.env.HTTP_TARGET_URL || 'http://127.0.0.1:' + ports.httpServerPort;
+    const match = target.match(/:\/\/(.*)/)[1];
+    return fetch(target, { agent: new ProxyAgent(proxy) })
+      .then(res => res.json())
+      .then(json => {
+        assert.equal(match, json.host);
+      })
+      .catch(err => {
+        throw err;
+      })
+  });
+
+  xit('should work over an SOCKSv4 proxy to an HTTPS server without auth', () => {
     const proxy = process.env.SOCKS4_PROXY || 'socks4://127.0.0.1:' + ports.socksProxyPort;
     const target = process.env.HTTPS_TARGET_URL || 'https://127.0.0.1:' + ports.httpsServerPort;
     const match = target.match(/:\/\/(.*)/)[1];
@@ -147,7 +203,21 @@ describe('ProxyAgent', () => {
       })
   });
 
-  it('should work over an SOCKSv5 proxy to an HTTP server', () => {
+  xit('should work over an SOCKSv4 proxy to an HTTPS server with auth', () => {
+    const proxy = process.env.SOCKS4_PROXY || 'socks4://toto:tata@127.0.0.1:' + ports.socksProxyPort;
+    const target = process.env.HTTPS_TARGET_URL || 'https://127.0.0.1:' + ports.httpsServerPort;
+    const match = target.match(/:\/\/(.*)/)[1];
+    return fetch(target, { agent: new ProxyAgent(proxy) })
+      .then(res => res.json())
+      .then(json => {
+        assert.equal(match, json.host);
+      })
+      .catch(err => {
+        throw err;
+      })
+  });
+
+  it('should work over an SOCKSv5 proxy to an HTTP server without auth', () => {
     const proxy = process.env.SOCKS5_PROXY || 'socks5://127.0.0.1:' + ports.socksProxyPort;
     const target = process.env.HTTP_TARGET_URL || 'http://127.0.0.1:' + ports.httpServerPort;
     const match = target.match(/:\/\/(.*)/)[1];
@@ -161,8 +231,36 @@ describe('ProxyAgent', () => {
       })
   });
 
-  it('should work over an SOCKSv5 proxy to an HTTPS server', () => {
+  it('should work over an SOCKSv5 proxy to an HTTP server with auth', () => {
+    const proxy = process.env.SOCKS5_PROXY || 'socks5://toto:tata@127.0.0.1:' + ports.socksProxyPort;
+    const target = process.env.HTTP_TARGET_URL || 'http://127.0.0.1:' + ports.httpServerPort;
+    const match = target.match(/:\/\/(.*)/)[1];
+    return fetch(target, { agent: new ProxyAgent(proxy) })
+      .then(res => res.json())
+      .then(json => {
+        assert.equal(match, json.host);
+      })
+      .catch(err => {
+        throw err;
+      })
+  });
+
+  xit('should work over an SOCKSv5 proxy to an HTTPS server without auth', () => {
     const proxy = process.env.SOCKS5_PROXY || 'socks5://127.0.0.1:' + ports.socksProxyPort;
+    const target = process.env.HTTPS_TARGET_URL || 'https://127.0.0.1:' + ports.httpsServerPort;
+    const match = target.match(/:\/\/(.*)/)[1];
+    return fetch(target, { agent: new ProxyAgent(proxy) })
+      .then(res => res.json())
+      .then(json => {
+        assert.equal(match, json.host);
+      })
+      .catch(err => {
+        throw err;
+      })
+  });
+
+  xit('should work over an SOCKSv5 proxy to an HTTPS server with auth', () => {
+    const proxy = process.env.SOCKS5_PROXY || 'socks5://toto:tata@127.0.0.1:' + ports.socksProxyPort;
     const target = process.env.HTTPS_TARGET_URL || 'https://127.0.0.1:' + ports.httpsServerPort;
     const match = target.match(/:\/\/(.*)/)[1];
     return fetch(target, { agent: new ProxyAgent(proxy) })

@@ -47,6 +47,7 @@ HTTP.prototype.createConnection = function(options) {
       const req = http.request({
         host: this.proxy.hostname,
         port: this.proxy.port,
+        auth: this.proxy.auth,
         method: 'CONNECT',
         path: (options.hostname || options.host) + ":" + options.port,
         headers: {
@@ -82,7 +83,8 @@ HTTP.prototype.createConnection = function(options) {
     } else {
       const socket = net.connect({
         host: this.proxy.host,
-        port: this.proxy.port
+        port: this.proxy.port,
+        auth: this.proxy.auth,
       });
       resolve(socket);
     }
