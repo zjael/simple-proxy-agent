@@ -65,25 +65,19 @@ SOCKS.prototype.createConnection = async function(options) {
       })
     }
 
-    let userId = '';
-    let password = '';
-    if(this.proxy.auth !== null) {
-      const auth = this.proxy.auth.split(':');
-      userId = auth[0];
-      password = auth[1];
-    }
-
-
     const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
     if(ssl && this.options.tunnel === true && options.port === 80) options.port = 443;
+
+    const auth = this.proxy.auth && this.proxy.auth.split(':');
     const { socket } = await SocksClient.createConnection({
       proxy: {
         host: this.proxy.hostname || this.proxy.host,
         port: +this.proxy.port,
-        protocol: this.proxy.protocol,
         type: this.proxy.type,
-        userId: userId,
-        password: password,
+        ...(auth && {
+          userId: auth[0],
+          password: auth[1]
+        })
       },
       command: 'connect',
       destination: {
