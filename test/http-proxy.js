@@ -56,6 +56,7 @@ server.on('connect', (req, clientSocket, head) => {
       clientSocket.write('HTTP/1.1 401 Unauthorized\r\n' +
         'Proxy-agent: NodeJS-Proxy\r\n' +
         '\r\n');
+        throw new Error("unauthorized");
     }
     serverSocket.write(head);
     serverSocket.pipe(clientSocket);
