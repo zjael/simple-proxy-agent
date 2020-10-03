@@ -39,13 +39,25 @@ const server = http.createServer((req, res) => {
 
 server.on('connect', (req, clientSocket, head) => {
   let parsed = url.parse(`http://${req.url}`);
-  if(+parsed.port === 443) parsed = url.parse(`https://${req.url}`);
+  if (+parsed.port === 443) parsed = url.parse(`https://${req.url}`);
+  //check authorization
+  let authorizationOk = true
+  const authorization = req.headers.authorization;
+  if (authorization !== undefined) {
+    authorizationOk = authorization === 'Basic ' + Buffer.from('toto:tata', 'utf-8').toString('base64');
+  }
 
   const serverSocket = net.connect(parsed.port, parsed.hostname, () => {
-    clientSocket.write('HTTP/1.1 200 Connection Established\r\n' +
-      'Proxy-agent: NodeJS-Proxy\r\n' +
-      '\r\n');
-
+    if (authorizationOk) {
+      clientSocket.write('HTTP/1.1 200 Connection Established\r\n' +
+        'Proxy-agent: NodeJS-Proxy\r\n' +
+        '\r\n');
+    } else {
+      clientSocket.write('HTTP/1.1 401 Unauthorized\r\n' +
+        'Proxy-agent: NodeJS-Proxy\r\n' +
+        '\r\n');
+        throw new Error("unauthorized");
+    }
     serverSocket.write(head);
     serverSocket.pipe(clientSocket);
     clientSocket.pipe(serverSocket);

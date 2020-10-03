@@ -1,7 +1,7 @@
 const http = require('http');
 const https = require('https');
 
-let servers = [];
+const servers = [];
 
 function createHTTP() {
   return new Promise(resolve => {
