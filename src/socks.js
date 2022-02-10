@@ -50,7 +50,7 @@ SOCKS.prototype.createConnection = async function(options) {
     let lookup = false;
     switch (this.proxy.protocol) {
       case 'socks4:':
-      case 'socks5h:':
+      case 'socks5:':
         lookup = true;
         break;
     }
