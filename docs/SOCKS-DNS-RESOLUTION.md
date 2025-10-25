@@ -8,12 +8,12 @@ There's a bug in how SOCKS proxy DNS resolution is handled in `src/socks.js`.
 
 Different SOCKS protocols handle DNS resolution differently:
 
-| Protocol | DNS Resolution | Implementation |
-|----------|---------------|----------------|
-| SOCKS4   | **Local** (client-side) | Client must resolve hostname to IP before sending to proxy |
-| SOCKS4a  | **Remote** (server-side) | Proxy resolves hostname |
-| SOCKS5   | **Remote** (server-side) | Proxy resolves hostname (default behavior) |
-| SOCKS5h  | **Remote** (server-side) | Explicitly remote (same as SOCKS5) |
+| Protocol | DNS Resolution           | Implementation                                             |
+| -------- | ------------------------ | ---------------------------------------------------------- |
+| SOCKS4   | **Local** (client-side)  | Client must resolve hostname to IP before sending to proxy |
+| SOCKS4a  | **Remote** (server-side) | Proxy resolves hostname                                    |
+| SOCKS5   | **Remote** (server-side) | Proxy resolves hostname (default behavior)                 |
+| SOCKS5h  | **Remote** (server-side) | Explicitly remote (same as SOCKS5)                         |
 
 ## Current Bug
 
@@ -23,7 +23,7 @@ In `src/socks.js` lines 72-78:
 let lookup = false;
 switch (this.proxy.protocol) {
   case 'socks4:':
-  case 'socks5:':      // ❌ BUG: SOCKS5 should NOT do local DNS
+  case 'socks5:': // ❌ BUG: SOCKS5 should NOT do local DNS
     lookup = true;
     break;
 }
@@ -41,6 +41,7 @@ switch (this.proxy.protocol) {
 ## Why SOCKS4 Tests Are Failing
 
 SOCKS4 tests may be failing due to:
+
 1. Test proxy server not properly handling SOCKS4 protocol
 2. DNS resolution issues in test environment
 3. Network/firewall blocking SOCKS4 connections

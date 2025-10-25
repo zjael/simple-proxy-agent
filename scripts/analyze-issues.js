@@ -21,7 +21,9 @@ const issuesFile = process.argv[2];
 if (!issuesFile) {
   console.log('Usage: node scripts/analyze-issues.js <issues.json>');
   console.log('\nTo export issues from GitHub:');
-  console.log('  gh issue list --json number,title,state,labels,createdAt --limit 100 > issues.json');
+  console.log(
+    '  gh issue list --json number,title,state,labels,createdAt --limit 100 > issues.json'
+  );
   console.log('  node scripts/analyze-issues.js issues.json');
   console.log('\nOr visit: https://github.com/zjael/simple-proxy-agent/issues');
   process.exit(1);
@@ -56,7 +58,12 @@ issues.forEach(issue => {
   const title = issue.title.toLowerCase();
   const labels = issue.labels?.map(l => l.name.toLowerCase()) || [];
 
-  if (labels.includes('bug') || title.includes('bug') || title.includes('error') || title.includes('fail')) {
+  if (
+    labels.includes('bug') ||
+    title.includes('bug') ||
+    title.includes('error') ||
+    title.includes('fail')
+  ) {
     categories.bugs.push(issue);
   }
   if (labels.includes('enhancement') || labels.includes('feature')) {
