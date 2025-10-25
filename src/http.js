@@ -46,6 +46,14 @@ HTTP.prototype.addRequest = function (req, options) {
   req.path = decodeURIComponent(absolute);
   req.shouldKeepAlive = false;
 
+  // Add Proxy-Authorization header for authenticated proxies
+  if (this.proxy.auth) {
+    req.setHeader(
+      'Proxy-Authorization',
+      'Basic ' + Buffer.from(this.proxy.auth).toString('base64')
+    );
+  }
+
   this.createConnection(options)
     .then(socket => {
       req.onSocket(socket);
@@ -67,24 +75,39 @@ HTTP.prototype.createConnection = function (options) {
     if (ssl && this.options.tunnel === true) {
       if (options.port === 80) options.port = 443;
       // CONNECT Method
+      const headers = {
+        host: options.host,
+      };
+
+      // Add Proxy-Authorization header for authenticated proxies
+      if (this.proxy.auth) {
+        headers['Proxy-Authorization'] = 'Basic ' + Buffer.from(this.proxy.auth).toString('base64');
+      }
+
       const req = http.request({
         host: this.proxy.hostname,
         port: this.proxy.port,
-        auth: this.proxy.auth,
         method: 'CONNECT',
         path: (options.hostname || options.host) + ':' + options.port,
-        headers: {
-          host: options.host,
-        },
+        headers: headers,
         timeout: this.options.timeout,
       });
 
       req.once('connect', (res, socket, _head) => {
+        // Verify CONNECT request succeeded
+        if (res.statusCode !== 200) {
+          socket.destroy();
+          reject(
+            new Error(`Proxy CONNECT failed with status ${res.statusCode}: ${res.statusMessage}`)
+          );
+          return;
+        }
+
         const tunnel = tls.connect({
           socket: socket,
           host: options.hostname || options.host,
           port: +options.port,
-          servername: options.servername || options.host,
+          servername: options.servername || options.hostname || options.host,
         });
         resolve(tunnel);
       });
@@ -107,7 +130,6 @@ HTTP.prototype.createConnection = function (options) {
       const socket = net.connect({
         host: this.proxy.host,
         port: this.proxy.port,
-        auth: this.proxy.auth,
       });
       resolve(socket);
     }

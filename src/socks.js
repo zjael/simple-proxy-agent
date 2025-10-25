@@ -69,10 +69,10 @@ SOCKS.prototype.addRequest = function (req, options) {
  * @private
  */
 SOCKS.prototype.createConnection = async function (options) {
-  // Only SOCKS4 requires local DNS resolution (it needs an IP address)
-  // SOCKS4a, SOCKS5, and SOCKS5h all support remote DNS resolution
+  // SOCKS4 and SOCKS5 use client-side DNS resolution
+  // SOCKS4a and SOCKS5h use remote DNS resolution (hostname resolved by proxy)
   let lookup = false;
-  if (this.proxy.protocol === 'socks4:') {
+  if (this.proxy.protocol === 'socks4:' || this.proxy.protocol === 'socks5:') {
     lookup = true;
   }
 
@@ -113,7 +113,7 @@ SOCKS.prototype.createConnection = async function (options) {
       socket: socket,
       host: options.hostname || options.host,
       port: +options.port,
-      servername: options.servername || options.host,
+      servername: options.servername || options.hostname || options.host,
     });
   }
 

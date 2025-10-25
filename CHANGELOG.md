@@ -9,12 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **Critical:** Fixed SOCKS5 DNS resolution bug where hostnames were resolved locally instead of remotely
-  - SOCKS5 now correctly uses remote DNS resolution (proxy-side)
-  - Only SOCKS4 does local DNS resolution (as required by the protocol)
-  - SOCKS4a, SOCKS5, and SOCKS5h all use remote DNS
+- **Critical:** Fixed proxy authentication for HTTPS connections
+  - Added proper `Proxy-Authorization` header for CONNECT requests
+  - Fixed authentication for both HTTP and HTTPS proxies
+  - Should resolve issue #33 (authenticated proxy failures)
+- **Important:** Fixed SNI (Server Name Indication) handling for TLS connections
+  - Now correctly uses hostname without port for servername
+  - Should resolve issue #24 (421 Misdirected Request errors)
+- **Important:** Fixed SOCKS DNS resolution to match standard behavior
+  - SOCKS4 and SOCKS5 use client-side DNS resolution
+  - SOCKS4a and SOCKS5h use remote DNS resolution (proxy-side)
+- Added validation for proxy CONNECT response status codes
+- Added better error messages for proxy connection failures
 
 ### Added
+
+- **Performance:** LRU cache for agent instances (max 50 cached agents)
+  - Agent instances are automatically reused for identical configurations
+  - Reduces overhead for repeated proxy connections
 
 - Integration test suite for testing with real proxy servers
 - Example scripts: `integration-test.js`, `simple-test.js`, `mock-proxy-server.js`
@@ -47,6 +59,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `mocha`: ^9.0.2 → ^11.0.1
 - `node-fetch`: ^2.6.0 → ^2.7.0
 - `pem`: ^1.14.3 → ^1.14.8
+
+### Added Dependencies
+
+- `lru-cache`: ^11.0.2 (for agent instance caching)
 
 ### Added Dev Dependencies
 

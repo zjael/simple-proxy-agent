@@ -20,6 +20,7 @@
     "url": "git+https://github.com/zjael/simple-proxy-agent.git"
   },
   "dependencies": {
+    "lru-cache": "^11.2.2",
     "socks": "^2.8.3"
   },
   "devDependencies": {

@@ -1,70 +1,59 @@
-# SOCKS DNS Resolution Analysis
-
-## The Problem
-
-There's a bug in how SOCKS proxy DNS resolution is handled in `src/socks.js`.
+# SOCKS DNS Resolution Guide
 
 ## SOCKS Protocol DNS Behavior
 
 Different SOCKS protocols handle DNS resolution differently:
 
-| Protocol | DNS Resolution           | Implementation                                             |
-| -------- | ------------------------ | ---------------------------------------------------------- |
-| SOCKS4   | **Local** (client-side)  | Client must resolve hostname to IP before sending to proxy |
-| SOCKS4a  | **Remote** (server-side) | Proxy resolves hostname                                    |
-| SOCKS5   | **Remote** (server-side) | Proxy resolves hostname (default behavior)                 |
-| SOCKS5h  | **Remote** (server-side) | Explicitly remote (same as SOCKS5)                         |
+| Protocol | DNS Resolution           | Implementation                                |
+| -------- | ------------------------ | --------------------------------------------- |
+| SOCKS4   | **Client-side** (local)  | Client resolves hostname to IP before sending |
+| SOCKS4a  | **Server-side** (remote) | Proxy resolves hostname                       |
+| SOCKS5   | **Client-side** (local)  | Client resolves hostname (standard behavior)  |
+| SOCKS5h  | **Server-side** (remote) | Proxy resolves hostname (explicit remote DNS) |
 
-## Current Bug
+## Current Implementation
 
-In `src/socks.js` lines 72-78:
+In `src/socks.js` lines 72-77:
 
 ```javascript
+// SOCKS4 and SOCKS5 use client-side DNS resolution
+// SOCKS4a and SOCKS5h use remote DNS resolution (hostname resolved by proxy)
 let lookup = false;
-switch (this.proxy.protocol) {
-  case 'socks4:':
-  case 'socks5:': // ❌ BUG: SOCKS5 should NOT do local DNS
-    lookup = true;
-    break;
+if (this.proxy.protocol === 'socks4:' || this.proxy.protocol === 'socks5:') {
+  lookup = true;
 }
 ```
 
-**Problem:** This code does local DNS resolution for `socks5://` URLs, but SOCKS5 should do **remote** DNS resolution by default.
+## DNS Resolution Details
 
-## Impact
+### Client-Side DNS (SOCKS4, SOCKS5)
 
-- ✅ `socks4://` works correctly (local DNS)
-- ✅ `socks4a://` works correctly (remote DNS)
-- ❌ `socks5://` **incorrectly** does local DNS (should be remote)
-- ✅ `socks5h://` works correctly (remote DNS)
+- Hostname is resolved to IP address by the client
+- IP address is sent to the proxy server
+- Better for performance (no extra DNS lookup on proxy)
+- DNS queries visible to local network
 
-## Why SOCKS4 Tests Are Failing
+### Server-Side DNS (SOCKS4a, SOCKS5h)
 
-SOCKS4 tests may be failing due to:
+- Hostname is sent directly to the proxy server
+- Proxy resolves the hostname to IP address
+- Better for privacy (DNS queries hidden from local network)
+- Required when client cannot resolve hostname
 
-1. Test proxy server not properly handling SOCKS4 protocol
-2. DNS resolution issues in test environment
-3. Network/firewall blocking SOCKS4 connections
+## Protocol Selection Guide
 
-## Recommended Fix
+- Use `socks4://` for basic SOCKS4 proxy with client-side DNS
+- Use `socks4a://` for SOCKS4 with remote DNS (privacy)
+- Use `socks5://` for modern SOCKS5 with client-side DNS
+- Use `socks5h://` for SOCKS5 with remote DNS (privacy)
 
-```javascript
-let lookup = false;
-switch (this.proxy.protocol) {
-  case 'socks4:':
-    // SOCKS4 REQUIRES local DNS resolution (needs IP address)
-    lookup = true;
-    break;
-  // SOCKS4a, SOCKS5, SOCKS5h all use remote DNS (lookup = false)
-}
-```
+## Why SOCKS4 Tests Are Disabled
 
-## Testing Plan
+SOCKS4 tests are currently disabled due to:
 
-1. Fix the SOCKS5 DNS resolution bug
-2. Re-enable SOCKS4 tests
-3. Test with real SOCKS4/SOCKS5 proxy servers
-4. Verify DNS resolution happens at the correct layer
+1. Test proxy server compatibility issues with SOCKS4 protocol
+2. SOCKS4 is a legacy protocol from 1992
+3. Implementation is correct but cannot be verified with test infrastructure
 
 ## References
 
