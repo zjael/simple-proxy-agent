@@ -124,12 +124,14 @@ Creates a new proxy agent instance.
 
 ## Supported Proxy Protocols
 
-- `http://` - HTTP proxy
-- `https://` - HTTPS proxy
-- `socks://` or `socks5://` - SOCKS5 proxy (remote DNS resolution)
-- `socks5h://` - SOCKS5 proxy (remote DNS resolution, explicit)
-- `socks4://` - SOCKS4 proxy (local DNS resolution)
-- `socks4a://` - SOCKS4a proxy (remote DNS resolution)
+- `http://` - HTTP proxy ✅
+- `https://` - HTTPS proxy ✅
+- `socks://` or `socks5://` - SOCKS5 proxy (remote DNS resolution) ✅
+- `socks5h://` - SOCKS5 proxy (remote DNS resolution, explicit) ✅
+- `socks4://` - SOCKS4 proxy ⚠️ (experimental, known issues)
+- `socks4a://` - SOCKS4a proxy ⚠️ (experimental, known issues)
+
+**Note:** SOCKS5 is the recommended protocol for SOCKS proxies. SOCKS4/4a support is experimental and has known compatibility issues.
 
 ## Requirements
 

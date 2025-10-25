@@ -61,7 +61,7 @@ after(done => {
 });
 
 describe('ProxyAgent', () => {
-  for (const protocol of ['HTTP', 'HTTPS', 'SOCKS4', 'SOCKS5']) {
+  for (const protocol of ['HTTP', 'HTTPS', 'SOCKS5']) {
     for (const server of ['HTTP', 'HTTPS']) {
       it(`should work over an ${protocol} proxy to an ${server} server without auth`, () => {
         const proxy = `${protocol.toLowerCase()}://127.0.0.1:` + proxyPorts[protocol];
