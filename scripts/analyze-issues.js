@@ -13,7 +13,6 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 
 console.log('GitHub Issues Analyzer\n');
 
