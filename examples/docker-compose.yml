@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # HTTP/HTTPS Proxy (Squid)
+  squid:
+    image: ubuntu/squid:latest
+    container_name: test-http-proxy
+    ports:
+      - "3128:3128"
+    volumes:
+      - ./squid.conf:/etc/squid/squid.conf:ro
+    healthcheck:
+      test: ["CMD", "squidclient", "-h", "localhost", "-p", "3128", "mgr:info"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # SOCKS5 Proxy
+  socks5:
+    image: serjs/go-socks5-proxy:latest
+    container_name: test-socks5-proxy
+    ports:
+      - "1080:1080"
+    environment:
+      - PROXY_USER=
+      - PROXY_PASSWORD=
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "1080"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # SOCKS5 Proxy with Authentication
+  socks5-auth:
+    image: serjs/go-socks5-proxy:latest
+    container_name: test-socks5-auth-proxy
+    ports:
+      - "1081:1080"
+    environment:
+      - PROXY_USER=testuser
+      - PROXY_PASSWORD=testpass
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "1080"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  default:
+    name: proxy-test-network
