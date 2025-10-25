@@ -7,8 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Critical:** Fixed SOCKS5 DNS resolution bug where hostnames were resolved locally instead of remotely
+  - SOCKS5 now correctly uses remote DNS resolution (proxy-side)
+  - Only SOCKS4 does local DNS resolution (as required by the protocol)
+  - SOCKS4a, SOCKS5, and SOCKS5h all use remote DNS
+
 ### Added
 
+- Integration test suite for testing with real proxy servers
+- Example scripts: `integration-test.js`, `simple-test.js`, `mock-proxy-server.js`
+- Docker Compose setup for testing with real proxies
+- Documentation for SOCKS DNS resolution behavior
 - TypeScript type definitions (.d.ts files) for all modules
 - JSDoc comments throughout the codebase for better IDE support
 - ESLint configuration with modern JavaScript rules

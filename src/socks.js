@@ -69,12 +69,11 @@ SOCKS.prototype.addRequest = function (req, options) {
  * @private
  */
 SOCKS.prototype.createConnection = async function (options) {
+  // Only SOCKS4 requires local DNS resolution (it needs an IP address)
+  // SOCKS4a, SOCKS5, and SOCKS5h all support remote DNS resolution
   let lookup = false;
-  switch (this.proxy.protocol) {
-    case 'socks4:':
-    case 'socks5:':
-      lookup = true;
-      break;
+  if (this.proxy.protocol === 'socks4:') {
+    lookup = true;
   }
 
   let ip = options.hostname;
