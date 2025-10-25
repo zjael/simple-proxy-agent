@@ -64,12 +64,8 @@ describe('ProxyAgent', () => {
   for (const protocol of ['HTTP', 'HTTPS', 'SOCKS4', 'SOCKS5']) {
     for (const server of ['HTTP', 'HTTPS']) {
       it(`should work over an ${protocol} proxy to an ${server} server without auth`, () => {
-        const proxy =
-          process.env[`${protocol}_PROXY`] ||
-          `${protocol.toLowerCase()}://127.0.0.1:` + proxyPorts[protocol];
-        const target =
-          process.env.HTTP_TARGET_URL ||
-          `${server.toLowerCase()}://127.0.0.1:` + serverPorts[server];
+        const proxy = `${protocol.toLowerCase()}://127.0.0.1:` + proxyPorts[protocol];
+        const target = `${server.toLowerCase()}://127.0.0.1:` + serverPorts[server];
         const match = target.match(/:\/\/(.*)/)[1];
         return fetch(target, { agent: new ProxyAgent(proxy) })
           .then(res => res.json())
@@ -84,12 +80,8 @@ describe('ProxyAgent', () => {
 
     for (const server of ['HTTP', 'HTTPS']) {
       it(`should work over an ${protocol} proxy to an ${server} server with auth`, () => {
-        const proxy =
-          process.env[`${protocol}_PROXY`] ||
-          `${protocol.toLowerCase()}://toto:tata@127.0.0.1:` + proxyPorts[protocol];
-        const target =
-          process.env.HTTPS_TARGET_URL ||
-          `${server.toLowerCase()}://127.0.0.1:` + serverPorts[server];
+        const proxy = `${protocol.toLowerCase()}://toto:tata@127.0.0.1:` + proxyPorts[protocol];
+        const target = `${server.toLowerCase()}://127.0.0.1:` + serverPorts[server];
         const match = target.match(/:\/\/(.*)/)[1];
         return fetch(target, { agent: new ProxyAgent(proxy) })
           .then(res => res.json())
