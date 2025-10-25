@@ -1,0 +1,5 @@
+node_modules
+coverage
+.git
+package-lock.json
+*.d.ts

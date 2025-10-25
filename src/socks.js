@@ -4,13 +4,25 @@ const dns = require('dns');
 const net = require('net');
 const { SocksClient } = require('socks');
 
+/**
+ * SOCKS Proxy Agent
+ * Handles connections through SOCKS4, SOCKS4a, SOCKS5, and SOCKS5h proxies
+ */
 class SOCKS {
+  /**
+   * @param {string} proxy - Proxy URL
+   * @param {import('./agent').ProxyAgentOptions} options - Agent options
+   */
   constructor(proxy, options) {
     this.proxy = proxy;
     this.options = options;
     this.init();
   }
 
+  /**
+   * Initializes the SOCKS proxy configuration
+   * @private
+   */
   init() {
     const proxy = url.parse(this.proxy);
     proxy.host = proxy.hostname || proxy.host;
@@ -32,8 +44,13 @@ class SOCKS {
   }
 }
 
-SOCKS.prototype.addRequest = function(req, options) {
-  if(!options.protocol) options = options.uri;
+/**
+ * Adds a request to the agent
+ * @param {import('http').ClientRequest} req - The HTTP request
+ * @param {Object} options - Request options
+ */
+SOCKS.prototype.addRequest = function (req, options) {
+  if (!options.protocol) options = options.uri;
   req.shouldKeepAlive = false;
 
   this.createConnection(options)
@@ -42,63 +59,65 @@ SOCKS.prototype.addRequest = function(req, options) {
     })
     .catch(err => {
       req.emit('error', err);
-    })
+    });
 };
 
-SOCKS.prototype.createConnection = async function(options) {
-  try {
-    let lookup = false;
-    switch (this.proxy.protocol) {
-      case 'socks4:':
-      case 'socks5:':
-        lookup = true;
-        break;
-    }
-
-    let ip = options.hostname;
-    if(lookup && !net.isIP(ip)) {
-      ip = await new Promise((resolve, reject) => {
-        dns.lookup(ip, (err, address) => {
-          if(err) reject(err);
-          resolve(address);
-        });
-      })
-    }
-
-    const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
-    if(ssl && this.options.tunnel === true && options.port === 80) options.port = 443;
-
-    const auth = this.proxy.auth && this.proxy.auth.split(':');
-    const { socket } = await SocksClient.createConnection({
-      proxy: {
-        host: this.proxy.hostname || this.proxy.host,
-        port: +this.proxy.port,
-        type: this.proxy.type,
-        ...(auth && {
-          userId: auth[0],
-          password: auth[1]
-        })
-      },
-      command: 'connect',
-      destination: {
-        host: ip,
-        port: +options.port
-      },
-      timeout: this.options.timeout
-    })
-
-    if(ssl && this.options.tunnel === true) {
-      return tls.connect({
-        socket: socket,
-        host: options.hostname || options.host,
-        port: +options.port,
-        servername: options.servername || options.host
-      });
-    }
-
-    return socket;
-  } catch (err) {
-    throw err;
+/**
+ * Creates a connection through the SOCKS proxy
+ * @param {Object} options - Connection options
+ * @returns {Promise<import('net').Socket>} Promise that resolves to a socket
+ * @private
+ */
+SOCKS.prototype.createConnection = async function (options) {
+  let lookup = false;
+  switch (this.proxy.protocol) {
+    case 'socks4:':
+    case 'socks5:':
+      lookup = true;
+      break;
   }
+
+  let ip = options.hostname;
+  if (lookup && !net.isIP(ip)) {
+    ip = await new Promise((resolve, reject) => {
+      dns.lookup(ip, (err, address) => {
+        if (err) reject(err);
+        resolve(address);
+      });
+    });
+  }
+
+  const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
+  if (ssl && this.options.tunnel === true && options.port === 80) options.port = 443;
+
+  const auth = this.proxy.auth && this.proxy.auth.split(':');
+  const { socket } = await SocksClient.createConnection({
+    proxy: {
+      host: this.proxy.hostname || this.proxy.host,
+      port: +this.proxy.port,
+      type: this.proxy.type,
+      ...(auth && {
+        userId: auth[0],
+        password: auth[1],
+      }),
+    },
+    command: 'connect',
+    destination: {
+      host: ip,
+      port: +options.port,
+    },
+    timeout: this.options.timeout,
+  });
+
+  if (ssl && this.options.tunnel === true) {
+    return tls.connect({
+      socket: socket,
+      host: options.hostname || options.host,
+      port: +options.port,
+      servername: options.servername || options.host,
+    });
+  }
+
+  return socket;
 };
 module.exports = SOCKS;

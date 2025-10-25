@@ -3,13 +3,25 @@ const url = require('url');
 const tls = require('tls');
 const net = require('net');
 
+/**
+ * HTTP/HTTPS Proxy Agent
+ * Handles connections through HTTP and HTTPS proxies
+ */
 class HTTP {
+  /**
+   * @param {string} proxy - Proxy URL
+   * @param {import('./agent').ProxyAgentOptions} options - Agent options
+   */
   constructor(proxy, options) {
     this.proxy = proxy;
     this.options = options;
     this.init();
   }
 
+  /**
+   * Initializes the proxy configuration
+   * @private
+   */
   init() {
     const proxy = url.parse(this.proxy);
     proxy.host = proxy.hostname || proxy.host;
@@ -18,13 +30,18 @@ class HTTP {
   }
 }
 
-HTTP.prototype.addRequest = function(req, options) {
-  if(!options.protocol) options = options.uri;
+/**
+ * Adds a request to the agent
+ * @param {import('http').ClientRequest} req - The HTTP request
+ * @param {Object} options - Request options
+ */
+HTTP.prototype.addRequest = function (req, options) {
+  if (!options.protocol) options = options.uri;
   const absolute = url.format({
     protocol: options.protocol || 'http:',
     hostname: options.hostname || options.host,
     port: options.port,
-    pathname: req.path
+    pathname: req.path,
   });
   req.path = decodeURIComponent(absolute);
   req.shouldKeepAlive = false;
@@ -35,43 +52,49 @@ HTTP.prototype.addRequest = function(req, options) {
     })
     .catch(err => {
       req.emit('error', err);
-    })
+    });
 };
 
-HTTP.prototype.createConnection = function(options) {
+/**
+ * Creates a connection through the proxy
+ * @param {Object} options - Connection options
+ * @returns {Promise<import('net').Socket>} Promise that resolves to a socket
+ * @private
+ */
+HTTP.prototype.createConnection = function (options) {
   return new Promise((resolve, reject) => {
     const ssl = options.protocol ? options.protocol.toLowerCase() === 'https:' : false;
-    if(ssl && this.options.tunnel === true) {
-      if(options.port === 80) options.port = 443;
+    if (ssl && this.options.tunnel === true) {
+      if (options.port === 80) options.port = 443;
       // CONNECT Method
       const req = http.request({
         host: this.proxy.hostname,
         port: this.proxy.port,
         auth: this.proxy.auth,
         method: 'CONNECT',
-        path: (options.hostname || options.host) + ":" + options.port,
+        path: (options.hostname || options.host) + ':' + options.port,
         headers: {
-          host: options.host
+          host: options.host,
         },
-        timeout: this.options.timeout
+        timeout: this.options.timeout,
       });
 
-      req.once('connect', (res, socket, head) => {
+      req.once('connect', (res, socket, _head) => {
         const tunnel = tls.connect({
           socket: socket,
           host: options.hostname || options.host,
           port: +options.port,
-          servername: options.servername || options.host
+          servername: options.servername || options.host,
         });
         resolve(tunnel);
       });
 
       req.once('timeout', () => {
         req.abort();
-        reject(new Error('HTTP CONNECT request timed out'))
-      })
+        reject(new Error('HTTP CONNECT request timed out'));
+      });
 
-      req.once('error', (err) => {
+      req.once('error', err => {
         reject(err);
       });
 
@@ -88,7 +111,7 @@ HTTP.prototype.createConnection = function(options) {
       });
       resolve(socket);
     }
-  })
+  });
 };
 
 module.exports = HTTP;

@@ -12,8 +12,8 @@ function createHTTP() {
     servers.push(server);
     server.listen(() => {
       resolve(server.address().port);
-    })
-  })
+    });
+  });
 }
 
 function createHTTPS(options) {
@@ -25,12 +25,12 @@ function createHTTPS(options) {
     servers.push(server);
     server.listen(() => {
       resolve(server.address().port);
-    })
-  })
+    });
+  });
 }
 
 function closeAll() {
-  for(const server of servers) {
+  for (const server of servers) {
     server.close();
   }
 }
@@ -38,5 +38,5 @@ function closeAll() {
 module.exports = {
   createHTTP,
   createHTTPS,
-  closeAll
-}
+  closeAll,
+};
