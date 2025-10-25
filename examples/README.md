@@ -55,6 +55,7 @@ node examples/integration-test.js http://127.0.0.1:3128
 ```
 
 This will test:
+
 - HTTP requests through proxy
 - HTTPS requests through proxy
 - Different HTTP methods
@@ -72,6 +73,7 @@ docker-compose up -d
 ```
 
 This will start:
+
 - **HTTP Proxy (Squid)** on port 3128
 - **SOCKS5 Proxy** on port 1080 (no auth)
 - **SOCKS5 Proxy with Auth** on port 1081 (user: testuser, pass: testpass)
@@ -159,16 +161,19 @@ You can use the integration test in CI/CD pipelines:
 ## Troubleshooting
 
 ### Proxy connection refused
+
 - Ensure the proxy server is running
 - Check firewall rules
 - Verify the proxy port
 
 ### Timeout errors
+
 - Increase timeout in the test script
 - Check network connectivity
 - Verify proxy server is responding
 
 ### Authentication failures
+
 - Double-check username and password
 - Ensure URL encoding for special characters in credentials
 - Example: `http://user%40name:p%40ssword@proxy:8080`
@@ -212,9 +217,10 @@ const ProxyAgent = require('simple-proxy-agent');
 
 const agent = new ProxyAgent('http://127.0.0.1:3128');
 
-axios.get('https://api.example.com/data', {
-  httpAgent: agent,
-  httpsAgent: agent,
-})
+axios
+  .get('https://api.example.com/data', {
+    httpAgent: agent,
+    httpsAgent: agent,
+  })
   .then(res => console.log(res.data));
 ```

@@ -44,7 +44,7 @@ https
         const json = JSON.parse(data);
         console.log(JSON.stringify(json, null, 2));
         console.log('\n✓ Proxy connection successful!');
-      } catch (e) {
+      } catch {
         console.log(data);
       }
     });

@@ -152,6 +152,7 @@ node examples/mock-proxy-server.js
 ```
 
 See [examples/README.md](examples/README.md) for detailed testing instructions, including:
+
 - Docker Compose setup with ready-to-use proxy servers
 - Testing different proxy types (HTTP, HTTPS, SOCKS5)
 - Authentication testing

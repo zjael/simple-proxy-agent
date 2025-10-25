@@ -132,15 +132,12 @@ async function runTest(test, proxyUrl) {
     if (result.body) {
       try {
         const json = JSON.parse(result.body);
-        const preview = JSON.stringify(json, null, 2)
-          .split('\n')
-          .slice(0, 5)
-          .join('\n');
+        const preview = JSON.stringify(json, null, 2).split('\n').slice(0, 5).join('\n');
         console.log(`  Response preview:\n${colorize(preview, 'cyan')}`);
         if (JSON.stringify(json).split('\n').length > 5) {
           console.log(`  ${colorize('... (truncated)', 'cyan')}`);
         }
-      } catch (e) {
+      } catch {
         const preview = result.body.substring(0, 200);
         console.log(`  Response preview: ${colorize(preview, 'cyan')}`);
         if (result.body.length > 200) {
@@ -201,7 +198,9 @@ async function main() {
   console.log(`Total tests:  ${results.length}`);
   console.log(`${colorize('Passed:', 'green')}       ${successful}`);
   console.log(`${colorize('Failed:', 'red')}       ${failed}`);
-  console.log(`Success rate: ${colorize(successRate + '%', successRate === '100.0' ? 'green' : 'yellow')}`);
+  console.log(
+    `Success rate: ${colorize(successRate + '%', successRate === '100.0' ? 'green' : 'yellow')}`
+  );
 
   if (successful > 0) {
     const durations = results.filter(r => r.success).map(r => r.duration);
