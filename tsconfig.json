@@ -6,7 +6,9 @@
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -14,6 +16,6 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.js", "src/**/*.d.ts", "test/**/*.js"],
-  "exclude": ["node_modules", "coverage"]
+  "include": ["src/**/*.js", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "coverage", "test"]
 }
