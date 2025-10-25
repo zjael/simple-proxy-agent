@@ -29,6 +29,7 @@
   - [ProxyAgent(proxy, options)](#proxyagentproxy-options)
   - [Options](#options)
 - [Supported Proxy Protocols](#supported-proxy-protocols)
+- [Testing](#testing)
 - [Requirements](#requirements)
 - [License](#license)
 
@@ -132,6 +133,37 @@ Creates a new proxy agent instance.
 - `socks4a://` - SOCKS4a proxy ⚠️ (experimental, known issues)
 
 **Note:** SOCKS5 is the recommended protocol for SOCKS proxies. SOCKS4/4a support is experimental and has known compatibility issues.
+
+## Testing
+
+### Integration Tests
+
+The repository includes comprehensive integration tests that can be run against real proxy servers:
+
+```bash
+# Quick test with any proxy
+node examples/simple-test.js http://127.0.0.1:8080
+
+# Full test suite
+node examples/integration-test.js socks5://127.0.0.1:1080
+
+# Start mock proxy server for local testing
+node examples/mock-proxy-server.js
+```
+
+See [examples/README.md](examples/README.md) for detailed testing instructions, including:
+- Docker Compose setup with ready-to-use proxy servers
+- Testing different proxy types (HTTP, HTTPS, SOCKS5)
+- Authentication testing
+- CI/CD integration examples
+
+### Unit Tests
+
+Run the test suite:
+
+```bash
+npm test
+```
 
 ## Requirements
 
