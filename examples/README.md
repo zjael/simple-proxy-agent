@@ -14,18 +14,38 @@ This directory contains scripts and configurations for testing `simple-proxy-age
 
 ### Option 1: Test with Mock Proxy (Simplest)
 
-Start the mock proxy server:
+Start the mock proxy server (no authentication):
 
 ```bash
 node examples/mock-proxy-server.js
+# Or specify custom port:
+node examples/mock-proxy-server.js 9999
+```
+
+Start with authentication enabled:
+
+```bash
+node examples/mock-proxy-server.js 8888 user:pass
 ```
 
 In another terminal, test with it:
 
 ```bash
+# Without authentication
 node examples/simple-test.js http://127.0.0.1:8888
 node examples/integration-test.js http://127.0.0.1:8888
+
+# With authentication
+node examples/simple-test.js http://user:pass@127.0.0.1:8888
 ```
+
+**Features:**
+
+- HTTP and HTTPS (CONNECT method) support
+- Optional proxy authentication (407 response)
+- Detailed request logging with counters
+- Request statistics on shutdown
+- Simulates real proxy server behavior
 
 **Note:** The mock proxy requires internet/DNS access to work properly.
 
